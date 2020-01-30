@@ -1,14 +1,16 @@
 package com.rest.dental.controller;
 
+import com.rest.dental.domain.Address;
 import com.rest.dental.domain.User;
-import com.rest.dental.exception.UserNotFoundException;
 import com.rest.dental.service.impl.UserServiceImpl;
+import com.rest.dental.util.Role;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserServiceImpl userService;
@@ -22,10 +24,10 @@ public class UserController {
                       String name,
                       String lastName,
                       String email,
-                      String birthday,
-                      String address,
+                      LocalDate birthday,
+                      Address address,
                       String phone,
-                      Integer role) {
+                      Role role) {
         User newUser = new User(
                 name,
                 lastName,
@@ -37,7 +39,7 @@ public class UserController {
         return userService.save(newUser);
     }
 
-    @GetMapping("/all")
+    @GetMapping()
     List<User> all() {
         return userService.getAll();
     }
@@ -45,8 +47,7 @@ public class UserController {
 
     @GetMapping(value = "/find/{id:[\\d]+}")
     User find(@PathVariable Integer id) {
-        return userService.get(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+        return userService.get(id).get();
     }
 
     @DeleteMapping("/delete/{id:[\\d]+}")
